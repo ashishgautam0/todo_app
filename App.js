@@ -4,7 +4,6 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
 
 import TodoListScreen from "./screens/TodoListScreen";
-import CompletedTasksScreen from "./screens/CompletedTasksScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -24,9 +23,8 @@ const App = () => (
         tabBarActiveTintColor: "#1DA1F2",
         tabBarInactiveTintColor: "gray",
       })}
-    >
+     >
       <Tab.Screen name="Tasks" component={TodoListScreen} />
-      <Tab.Screen name="Completed" component={CompletedTasksScreen} />
     </Tab.Navigator>
   </NavigationContainer>
 );

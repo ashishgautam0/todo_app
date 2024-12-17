@@ -7,81 +7,72 @@ import styles from "../styles/globalStyles";
 
 const TodoListScreen = () => {
   const [todos, setTodos] = useState([]);
-  const [completedTodos, setCompletedTodos] = useState([]);
-  const [text, setText] = useState("");
+  const [title, setTitle] = useState("");
 
   useEffect(() => {
-    const initializeTasks = async () => {
+    const fetchTasks = async () => {
       const storedTasks = await loadData("todos");
-      const storedCompleted = await loadData("completedTodos");
       setTodos(storedTasks || []);
-      setCompletedTodos(storedCompleted || []);
     };
-    initializeTasks();
+    fetchTasks();
   }, []);
 
-  const saveTasks = async (updatedTodos, updatedCompleted) => {
-    await saveData("todos", updatedTodos);
-    await saveData("completedTodos", updatedCompleted);
-  };
-
-  const addTodo = async () => {
-    if (text.trim()) {
-      const newTodos = [...todos, { id: Date.now().toString(), text }];
-      setTodos(newTodos);
-      await saveTasks(newTodos, completedTodos);
-      setText("");
-    }
-  };
-
-  const completeTodo = async (id) => {
-    const taskToComplete = todos.find((todo) => todo.id === id);
-    const updatedTodos = todos.filter((todo) => todo.id !== id);
-    const updatedCompleted = [...completedTodos, taskToComplete];
-
+  const saveTasks = async (updatedTodos) => {
     setTodos(updatedTodos);
-    setCompletedTodos(updatedCompleted);
-    await saveTasks(updatedTodos, updatedCompleted);
+    await saveData("todos", updatedTodos);
   };
 
-  const deleteCompletedTodo = async (id) => {
-    const updatedCompleted = completedTodos.filter((todo) => todo.id !== id);
-    setCompletedTodos(updatedCompleted);
-    await saveTasks(todos, updatedCompleted);
+  const addTask = async () => {
+    if (!title.trim()) return;
+    const newTask = { id: Date.now().toString(), title, status: false }; // Status: false by default
+    const updatedTodos = [...todos, newTask];
+    await saveTasks(updatedTodos);
+    setTitle(""); // Reset input
+  };
+
+  const toggleStatus = async (id) => {
+    const updatedTodos = todos.map((task) =>
+      task.id === id ? { ...task, status: !task.status } : task
+    );
+    await saveTasks(updatedTodos);
+  };
+
+  const deleteTask = async (id) => {
+    const updatedTodos = todos.filter((task) => task.id !== id);
+    await saveTasks(updatedTodos);
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.header}>To-Do List</Text>
 
-      {/* Add Task */}
       <View style={styles.inputContainer}>
         <TextInput
-          placeholder="Add a task..."
-          value={text}
-          onChangeText={setText}
+          placeholder="Task title..."
+          value={title}
+          onChangeText={setTitle}
           style={styles.input}
         />
-        <TouchableOpacity onPress={addTodo} style={styles.addButton}>
+        <TouchableOpacity
+          onPress={addTask}
+          style={[styles.addButton, !title.trim() && styles.disabledButton]}
+          disabled={!title.trim()} // Disable if input is empty
+        >
           <Ionicons name="add" size={24} color="#fff" />
         </TouchableOpacity>
       </View>
 
-      {/* Uncompleted Tasks */}
-      <Text style={styles.subHeader}>Pending Tasks</Text>
       <FlatList
         data={todos}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <TodoItem
             item={item}
-            isCompleted={false}
-            onDelete={() => completeTodo(item.id)}
+            onToggleStatus={toggleStatus} // Edit Status
+            onDelete={deleteTask} // Delete Task
           />
         )}
       />
-
-
     </View>
   );
 };

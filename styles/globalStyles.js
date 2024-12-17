@@ -19,30 +19,22 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    padding: 10,
     borderWidth: 1,
     borderColor: "#ddd",
+    padding: 10,
     borderRadius: 5,
     backgroundColor: "#fff",
   },
   addButton: {
-    marginLeft: 10,
     backgroundColor: "#1DA1F2",
-    borderRadius: 5,
+    marginLeft: 10,
     justifyContent: "center",
     alignItems: "center",
     padding: 10,
-  },
-  completedButton: {
-    marginTop: 10,
-    backgroundColor: "#1DA1F2",
-    padding: 10,
     borderRadius: 5,
   },
-  buttonText: {
-    color: "#fff",
-    textAlign: "center",
-    fontWeight: "bold",
+  disabledButton: {
+    backgroundColor: "#aaa",
   },
 });
 
