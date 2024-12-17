@@ -1,20 +1,34 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { Ionicons } from "@expo/vector-icons";
 
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
-}
+import TodoListScreen from "./screens/TodoListScreen";
+import CompletedTasksScreen from "./screens/CompletedTasksScreen";
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+const Tab = createBottomTabNavigator();
+
+const App = () => (
+  <NavigationContainer>
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconName;
+          if (route.name === "Tasks") {
+            iconName = focused ? "list" : "list-outline";
+          } else if (route.name === "Completed") {
+            iconName = focused ? "checkmark-circle" : "checkmark-circle-outline";
+          }
+          return <Ionicons name={iconName} size={size} color={color} />;
+        },
+        tabBarActiveTintColor: "#1DA1F2",
+        tabBarInactiveTintColor: "gray",
+      })}
+    >
+      <Tab.Screen name="Tasks" component={TodoListScreen} />
+      <Tab.Screen name="Completed" component={CompletedTasksScreen} />
+    </Tab.Navigator>
+  </NavigationContainer>
+);
+
+export default App;
